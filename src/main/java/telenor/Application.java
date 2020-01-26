@@ -31,7 +31,7 @@ public class Application {
         }
     }
 
-    private ValidationResult validateParameters(String account, String type, Integer id) {
+    ValidationResult validateParameters(String account, String type, Integer id) {
         ValidationResult result = new ValidationResult();
         if (id == null && account == null && type == null) {
             result.hasError = true;
@@ -70,7 +70,7 @@ public class Application {
         return !("business".equals(account) && "small".equals(type));
     }
 
-    private class ValidationResult {
+    class ValidationResult {
         boolean hasError = false;
         ResponseEntity<String> returnValue = new ResponseEntity<>(HttpStatus.OK);
     }

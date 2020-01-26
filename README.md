@@ -9,7 +9,7 @@ Locate yourself in the project, under /telenor folder
 ### Build project
 
 ```
-$ mvn package -Dmaven.test.skip=true
+$ mvn package
 ```
 
 ### Build docker image
@@ -25,8 +25,8 @@ $ docker build -t telenor-test .
 $ docker run -p 5000:8080 -t telenor-test
 ```
 
-### Run your tests
+### Run tests and integration tests
 
 ```
-$ mvn clean test
+$ mvn verify -Pfailsafe
 ```

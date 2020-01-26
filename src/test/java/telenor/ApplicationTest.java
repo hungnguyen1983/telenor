@@ -1,124 +1,69 @@
 package telenor;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ApplicationTest {
     @Test
-    public void testGreetingWithIdSuccess() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=personal&id=123";
-        URI uri = new URI(baseUrl);
+    public void testValidateIdSuccess() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("personal", null, 123);
 
-        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
+        Assert.assertEquals(false, result.hasError);
+    }
+    
+    @Test
+    public void testValidateAccountAndTypeSuccess() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("business", "big", null);
 
-        // Verify request succeed
-        Assert.assertEquals(200, result.getStatusCodeValue());
-        Assert.assertEquals(true, result.getBody().contains("Hi, userId 123"));
+        Assert.assertEquals(false, result.hasError);
     }
 
     @Test
-    public void testGreetingWithAccountAndTypeSuccess() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=business&type=big";
-        URI uri = new URI(baseUrl);
+    public void testValidateIdFailure() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("personal", null, 0);
 
-        ResponseEntity<String> result = restTemplate.getForEntity(uri, String.class);
-
-        // Verify request succeed
-        Assert.assertEquals(200, result.getStatusCodeValue());
-        Assert.assertEquals(true, result.getBody().contains("Welcome, business user!"));
+        Assert.assertEquals(true, result.hasError);
+        Assert.assertEquals(new ResponseEntity<>("id must be a positive integer", HttpStatus.BAD_REQUEST), result.returnValue);
     }
 
     @Test
-    public void testGreetingWithWrongId() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=personal&id=0";
-        URI uri = new URI(baseUrl);
+    public void testValidateAccountFailure() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("testAccount", null, null);
 
-        try {
-            restTemplate.getForEntity(uri, String.class);
-            Assert.fail();
-        } catch (HttpClientErrorException ex) {
-            // Verify bad request and error message
-            Assert.assertEquals(400, ex.getRawStatusCode());
-            Assert.assertEquals(true, ex.getResponseBodyAsString().contains("id must be a positive integer"));
-        }
+        Assert.assertEquals(true, result.hasError);
+        Assert.assertEquals(new ResponseEntity<>("This account is not valid", HttpStatus.BAD_REQUEST), result.returnValue);
     }
 
     @Test
-    public void testGreetingWithWrongAccount() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=testtest";
-        URI uri = new URI(baseUrl);
+    public void testValidateTypeFailure() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("business", "testType", null);
 
-        try {
-            restTemplate.getForEntity(uri, String.class);
-            Assert.fail();
-        } catch (HttpClientErrorException ex) {
-            // Verify bad request and error message
-            Assert.assertEquals(400, ex.getRawStatusCode());
-            Assert.assertEquals(true, ex.getResponseBodyAsString().contains("This account is not valid"));
-        }
+        Assert.assertEquals(true, result.hasError);
+        Assert.assertEquals(new ResponseEntity<>("This type is not valid", HttpStatus.BAD_REQUEST), result.returnValue);
     }
 
     @Test
-    public void testGreetingWithWrongType() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=business&type=medium";
-        URI uri = new URI(baseUrl);
+    public void testValidateAccountAndTypeCombinationFailure() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters("business", "small", null);
 
-        try {
-            restTemplate.getForEntity(uri, String.class);
-            Assert.fail();
-        } catch (HttpClientErrorException ex) {
-            // Verify bad request and wrong type
-            Assert.assertEquals(400, ex.getRawStatusCode());
-            Assert.assertEquals(true, ex.getResponseBodyAsString().contains("This type is not valid"));
-        }
+        Assert.assertEquals(true, result.hasError);
+        Assert.assertEquals(new ResponseEntity<>("The path is not yet implemented", HttpStatus.BAD_REQUEST), result.returnValue);
     }
 
     @Test
-    public void testGreetingUserWithWrongAccountAndTypeCombination() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting?account=business&type=small";
-        URI uri = new URI(baseUrl);
+    public void testValidateNoParameterFailure() {
+        Application application = new Application();
+        Application.ValidationResult result = application.validateParameters(null, null, null);
 
-        try {
-            restTemplate.getForEntity(uri, String.class);
-            Assert.fail();
-        } catch (HttpClientErrorException ex) {
-            // Verify bad request and error message
-            Assert.assertEquals(400, ex.getRawStatusCode());
-            Assert.assertEquals(true, ex.getResponseBodyAsString().contains("The path is not yet implemented"));
-        }
-    }
-
-    @Test
-    public void testGreetingWithoutAnyParameter() throws URISyntaxException {
-        RestTemplate restTemplate = new RestTemplate();
-        final String baseUrl = "http://localhost:5000/greeting";
-        URI uri = new URI(baseUrl);
-
-        try {
-            restTemplate.getForEntity(uri, String.class);
-            Assert.fail();
-        } catch (HttpClientErrorException ex) {
-            // Verify bad request and error message
-            Assert.assertEquals(400, ex.getRawStatusCode());
-            Assert.assertEquals(true, ex.getResponseBodyAsString().contains("No input provided"));
-        }
+        Assert.assertEquals(true, result.hasError);
+        Assert.assertEquals(new ResponseEntity<>("No input provided", HttpStatus.BAD_REQUEST), result.returnValue);
     }
 }
