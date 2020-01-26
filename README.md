@@ -9,20 +9,20 @@ Locate yourself in the project, under /telenor folder
 ### Build project
 
 ```
-$ mvn package -Dmaven.test.skip=true && java -jar target/greeting.jar
+$ mvn package -Dmaven.test.skip=true
 ```
 
 ### Build docker image
 
 ```
 $ mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-$ docker build -t greeting .
+$ docker build -t telenor-test .
 ```
 
 ### Run docker image locally
 
 ```
-$ docker run -p 5000:8080 -t greeting
+$ docker run -p 5000:8080 -t telenor-test
 ```
 
 ### Run your tests
