@@ -22,7 +22,7 @@ $ docker build -t greeting
 ### Run docker image locally
 
 ```
-$ docker run -p 5000:8080 -t greeting
+$ docker run -p 5000:8080 -t greeting .
 ```
 
 ### Run your tests
