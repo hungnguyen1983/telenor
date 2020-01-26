@@ -6,15 +6,15 @@ Telenor test project
 
 ### Build project
 
+Locate yourself in the project, under /telenor folder
+
 ```
-$ cd telenor
 $ mvn package -Dmaven.test.skip=true && java -jar target/greeting.jar
 ```
 
 ### Build docker image
 
 ```
-$ cd telenor
 $ mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 $ docker build -t greeting 
 ```
@@ -28,6 +28,5 @@ $ docker run -p 5000:8080 -t greeting
 ### Run your tests
 
 ```
-$ cd telenor
 $ mvn clean test
 ```
