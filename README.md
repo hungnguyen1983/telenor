@@ -1,4 +1,4 @@
-#Telenor test project
+# Telenor test project
 
 Telenor test project
 
@@ -29,5 +29,5 @@ $ docker run -p 5000:8080 -t greeting
 
 ```
 $ cd telenor
-$ npm run test
+$ mvn clean test
 ```
