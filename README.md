@@ -16,13 +16,13 @@ $ mvn package -Dmaven.test.skip=true && java -jar target/greeting.jar
 
 ```
 $ mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
-$ docker build -t greeting 
+$ docker build -t greeting .
 ```
 
 ### Run docker image locally
 
 ```
-$ docker run -p 5000:8080 -t greeting .
+$ docker run -p 5000:8080 -t greeting
 ```
 
 ### Run your tests
