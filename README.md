@@ -4,9 +4,9 @@ Telenor test project
 
 ## Project setup
 
-### Build project
-
 Locate yourself in the project, under /telenor folder
+
+### Build project
 
 ```
 $ mvn package -Dmaven.test.skip=true && java -jar target/greeting.jar
